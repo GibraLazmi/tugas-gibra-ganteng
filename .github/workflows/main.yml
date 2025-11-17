@@ -5,30 +5,29 @@ on:
   pull_request:
 
 jobs:
-  test:
+  php-smoke:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.1'
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
 
-      - name: Validate PHP Syntax
-        run: |
-          find login -type f -name "*.php" -print0 | xargs -0 -I {} php -l {}
+    - name: PHP Syntax Check
+      run: |
+        find . -type f -name "*.php" -print0 | xargs -0 -I {} php -l {}
 
-      - name: Start PHP server
-        run: |
-          nohup php -S 127.0.0.1:8000 -t login > server.log 2>&1 &
-          sleep 3
-          cat server.log
+    - name: Make tests executable
+      run: chmod +x tests/smoke.sh
 
-      - name: Test signup page
-        run: curl -f http://127.0.0.1:8000/signup.php
+    - name: Start PHP server
+      run: |
+        nohup php -S 127.0.0.1:8000 -t login > server.log 2>&1 &
+        sleep 3
 
-      - name: Test login page
-        run: curl -f http://127.0.0.1:8000/login.php
+    - name: Run smoke tests
+      run: ./tests/smoke.sh
