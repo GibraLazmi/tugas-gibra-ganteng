@@ -26,8 +26,8 @@ jobs:
 
     - name: Start PHP server
       run: |
-        nohup php -S 127.0.0.1:8000 -t login > server.log 2>&1 &
-        sleep 3
+        nohup php -S 127.0.0.1:8000 -t public > server.log 2>&1 &
+        sleep 5
 
     - name: Run smoke tests
       run: ./tests/smoke.sh
